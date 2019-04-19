@@ -1,7 +1,6 @@
 '''
 CS5250 Assignment 4, Scheduling policies simulator
 Sample skeleton program
-Author: Minh Ho
 Input file:
     input.txt
 Output files:
@@ -9,18 +8,8 @@ Output files:
     RR.txt
     SRTF.txt
     SJF.txt
-
-Apr 10th Revision 1:
-    Update FCFS implementation, fixed the bug when there are idle time slices between processes
-    Thanks Huang Lung-Chen for pointing out
-Revision 2:
-    Change requirement for future_prediction SRTF => future_prediction shortest job first(SJF), the simpler non-preemptive version.
-    Let initial guess = 5 time units.
-    Thanks Lee Wei Ping for trying and pointing out the difficulty & ambiguity with future_prediction SRTF.
 '''
 import sys
-import heapq
-import copy
 
 input_file = 'input.txt'
 
@@ -32,7 +21,7 @@ class Process:
         self.burst_time = burst_time
     #for printing purpose
     def __repr__(self):
-        return ('[id %d : arrive_time %d,  burst_time %d]'%(self.id, self.arrive_time, self.burst_time))
+        return ('[id %d : arrival_time %d,  burst_time %d]'%(self.id, self.arrive_time, self.burst_time))
 
 def FCFS_scheduling(process_list):
     #store the (switching time, proccess_id) pair
@@ -212,6 +201,7 @@ def read_input():
                 exit()
             result.append(Process(int(array[0]),int(array[1]),int(array[2])))
     return result
+
 def write_output(file_name, schedule, avg_waiting_time):
     with open(file_name,'w') as f:
         for item in schedule:
@@ -230,17 +220,13 @@ def main(argv):
     print ("simulating RR ----")
     RR_schedule, RR_avg_waiting_time =  RR_scheduling(process_list,time_quantum = 2)
     write_output('RR.txt', RR_schedule, RR_avg_waiting_time )
-    for i in range(1, 11):
-        RR_schedule, RR_avg_waiting_time =  RR_scheduling(process_list,time_quantum = i)
-        print("Time quantum = " + str(i) + "  Avg_wait_time = " + str(RR_avg_waiting_time))
     print ("simulating SRTF ----")
     SRTF_schedule, SRTF_avg_waiting_time =  SRTF_scheduling(process_list)
     write_output('SRTF.txt', SRTF_schedule, SRTF_avg_waiting_time )
     print ("simulating SJF ----")
     SJF_schedule, SJF_avg_waiting_time =  SJF_scheduling(process_list, alpha = 0.5)
     write_output('SJF.txt', SJF_schedule, SJF_avg_waiting_time )
-    for x in range(11):
-        SJF_schedule, SJF_avg_waiting_time =  SJF_scheduling(process_list, alpha = (0.1 * x))
-        print("Alpha = %.1f"%(0.1 * x) + " Avg_wait_time =" + str(SJF_avg_waiting_time))
+
 if __name__ == '__main__':
     main(sys.argv[1:])
+
